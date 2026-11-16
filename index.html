@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>English Grammar Mastery — Interactive Practice Quiz</title>
+<link rel="icon" type="image/png" href="favicon.png">
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-indigo-100 selection:text-indigo-800">
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <!-- Brand / Home Trigger -->
+      <button
+        type="button"
+        onclick="navigateTo('home')"
+        class="flex items-center gap-3 text-left group focus:outline-none rounded-xl p-1"
+        aria-label="Go to Main Menu"
+      >
+        <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-sm group-hover:bg-indigo-700 transition-colors">
+          <!-- Book / Check SVG Icon -->
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+        </div>
+        <div>
+          <span class="block text-base sm:text-lg font-bold text-slate-900 leading-tight group-hover:text-indigo-600 transition-colors">
+            Grammar Studio
+          </span>
+          <span class="hidden sm:block text-xs text-slate-500 font-medium">
+            Interactive English Practice
+          </span>
+        </div>
+      </button>
+
+      <!-- Global Score & Reset Action -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div class="flex items-center gap-2 bg-slate-100 border border-slate-200/80 px-3 py-1.5 rounded-xl">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span class="text-xs sm:text-sm font-semibold text-slate-700">
+            Solved: <span id="global-score-count" class="text-indigo-600 font-bold">0</span> / 21
+          </span>
+        </div>
+
+        <button
+          type="button"
+          onclick="openResetModal()"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-all focus:outline-none focus:ring-2 focus:ring-rose-500/30"
+          title="Reset all quiz progress"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <span class="hidden sm:inline">Reset</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main id="app-container" class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+    <!-- Dynamic Views Rendered via JavaScript -->
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 bg-white mt-auto">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+      <p>Interactive English Grammar Assessment &bull; 3 Core Modules &bull; 21 Questions</p>
+      <p>Progress is automatically saved in your browser.</p>
+    </div>
+  </footer>
+
+  <!-- Custom Reset Confirmation Modal (Replaces native confirm/alert) -->
+  <div
+    id="reset-modal"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs transition-opacity"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="reset-modal-title"
+  >
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 transform transition-all">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h3 id="reset-modal-title" class="text-lg font-bold text-slate-900">Reset All Progress?</h3>
+      </div>
+      <p class="text-sm text-slate-600 mb-6 leading-relaxed">
+        This will clear all your answers, attempt counters, and solved badges across all three grammar parts. You will be able to practice every question from scratch.
+      </p>
+      <div class="flex items-center justify-end gap-3">
+        <button
+          type="button"
+          onclick="closeResetModal()"
+          class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          onclick="confirmResetProgress()"
+          class="px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 shadow-sm transition-colors"
+        >
+          Yes, Reset Everything
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Logic & Quiz Data -->
+  <script>
+    /**
+     * Complete dataset of 3 grammar parts and 21 questions with hints and English explanations.
+     */
+    const QUIZ_PARTS = [
+      {
+        id: 'part1',
+        number: 1,
+        shortTitle: 'Part 1',
+        title: 'Articles (a / an / the / zero article)',
+        subtitle: 'Questions 1–7 • Definite, indefinite, and zero articles in context',
+        description:
+          'Practice choosing between "a", "an", "the", and the zero article (—) with professions, fixed expressions, superlatives, geographical names, and general plural nouns.',
+        accentColor: 'indigo',
+        questions: [
+          {
+            id: 1,
+            prompt: 'My brother wants to become ___ architect.',
+            options: { a: 'a', b: 'an', c: 'the', d: '—' },
+            correct: 'b',
+            hint: 'Look at the first sound of the singular countable noun "architect" (a vowel sound) and remember we use an indefinite article with professions.',
+            explanation:
+              'Use "an" before a singular countable noun starting with a vowel sound ("architect"), especially when naming someone\'s profession.',
+          },
+          {
+            id: 2,
+            prompt: 'We usually go to ___ school by bus.',
+            options: { a: 'a', b: 'an', c: 'the', d: '—' },
+            correct: 'd',
+            hint: 'Think about whether "school" is being used for its primary purpose (studying) rather than referring to a specific building.',
+            explanation:
+              'Zero article (—) is used in fixed expressions like "go to school" when referring to the institution\'s primary purpose (studying).',
+          },
+          {
+            id: 3,
+            prompt: "Could you close ___ window, please? It's cold in here.",
+            options: { a: 'a', b: 'an', c: 'the', d: '—' },
+            correct: 'c',
+            hint: 'Both the speaker and the listener know which specific window in the room is open.',
+            explanation:
+              'Use "the" because it is clear from the context which specific window in the room is being referred to.',
+          },
+          {
+            id: 4,
+            prompt: 'She is ___ most talented student in our class.',
+            options: { a: 'a', b: 'an', c: 'the', d: '—' },
+            correct: 'c',
+            hint: 'Look at the superlative adjective form "most talented".',
+            explanation:
+              'Always use the definite article "the" before superlative adjectives ("the most talented").',
+          },
+          {
+            id: 5,
+            prompt: 'I have never been to ___ United States.',
+            options: { a: 'a', b: 'an', c: 'the', d: '—' },
+            correct: 'c',
+            hint: 'Country names that are plural or contain words like "States", "Kingdom", or "Republic" require a specific article.',
+            explanation:
+              'Use "the" with country names that are plural or include words like "States" ("the United States").',
+          },
+          {
+            id: 6,
+            prompt: 'My dad reads ___ newspapers every morning.',
+            options: { a: 'a', b: 'an', c: 'the', d: '—' },
+            correct: 'd',
+            hint: '"Newspapers" is plural and is being mentioned in a general sense, not specific issues.',
+            explanation:
+              'Zero article (—) is used with plural countable nouns ("newspapers") when speaking in general.',
+          },
+          {
+            id: 7,
+            prompt: 'We had dinner at ___ small Italian restaurant yesterday.',
+            options: { a: 'a', b: 'an', c: 'the', d: '—' },
+            correct: 'a',
+            hint: 'The restaurant is singular, countable, and being mentioned for the first time. Note the consonant sound at the start of "small".',
+            explanation:
+              'Use "a" because the restaurant is mentioned for the first time (non-specific) and the word "small" starts with a consonant sound.',
+          },
+        ],
+      },
+      {
+        id: 'part2',
+        number: 2,
+        shortTitle: 'Part 2',
+        title: 'Other / The other / Others / The others',
+        subtitle: 'Questions 8–14 • Determiners and pronouns for remaining or additional items',
+        description:
+          'Master the distinctions between "another", "other", "the other", "others", and "the others" when referring to singular, plural, specific, or general groups.',
+        accentColor: 'violet',
+        questions: [
+          {
+            id: 8,
+            prompt: 'I have two phones. One is for work, and ___ is for personal use.',
+            options: { a: 'other', b: 'the other', c: 'others', d: 'the others' },
+            correct: 'b',
+            hint: 'There are only two items in total. One is mentioned; how do you refer to the single remaining one?',
+            explanation:
+              'Use "the other" when referring to the second (remaining) of two specific things.',
+          },
+          {
+            id: 9,
+            prompt: 'Some people enjoy winter, while ___ prefer summer.',
+            options: { a: 'another', b: 'the other', c: 'others', d: 'the others' },
+            correct: 'c',
+            hint: 'We are talking about people in general, not a closed or fixed group.',
+            explanation:
+              'Use "others" (without "the") to refer to other people or things in general, without specifying the entire remaining group.',
+          },
+          {
+            id: 10,
+            prompt: 'There are five students in the room. Two are reading, and ___ are talking.',
+            options: { a: 'other', b: 'another', c: 'others', d: 'the others' },
+            correct: 'd',
+            hint: 'We know the exact total number of students (5). Two are accounted for, so we mean ALL the remaining ones in this specific group.',
+            explanation:
+              'Use "the others" to refer to all the remaining people or things from a specific, known group (the remaining three out of five students).',
+          },
+          {
+            id: 11,
+            prompt: 'Could I have ___ piece of cake, please?',
+            options: { a: 'other', b: 'the other', c: 'another', d: 'others' },
+            correct: 'c',
+            hint: 'You want one more singular piece of cake ("one additional").',
+            explanation:
+              'Use "another" before a singular countable noun to mean "one more" or "an additional" piece.',
+          },
+          {
+            id: 12,
+            prompt: "I don't like this dress. Can you show me some ___ ones?",
+            options: { a: 'another', b: 'other', c: 'the other', d: 'others' },
+            correct: 'b',
+            hint: 'Notice the plural pronoun "ones" right after the blank—we need a determiner that can stand directly before a plural noun.',
+            explanation:
+              'Use "other" before plural nouns or pronouns ("other ones") when referring to different items in general.',
+          },
+          {
+            id: 13,
+            prompt: 'There are two doors. One leads to the kitchen, and ___ leads to the garden.',
+            options: { a: 'another', b: 'others', c: 'the other', d: 'the others' },
+            correct: 'c',
+            hint: 'Just like the two phones question, there are only two doors in total.',
+            explanation:
+              'Use "the other" to refer to the second of two specific items ("the other door").',
+          },
+          {
+            id: 14,
+            prompt: 'Some of my friends live in Poland. ___ live in Germany.',
+            options: { a: 'Another', b: 'The other', c: 'Others', d: 'The others' },
+            correct: 'c',
+            hint: 'Not necessarily all the remaining friends live in Germany—just some other friends in general.',
+            explanation:
+              'Use "Others" as a pronoun to refer to some other people in a non-specific group (as opposed to all of the remaining ones).',
+          },
+        ],
+      },
+      {
+        id: 'part3',
+        number: 3,
+        shortTitle: 'Part 3',
+        title: 'Compound Nouns & Modifiers Based on Numbers',
+        subtitle: 'Questions 15–21 • Hyphenated number-unit modifiers before nouns',
+        description:
+          'Learn how numbers combine with time and measurement units before nouns—keeping the unit singular and joining words cleanly with hyphens.',
+        accentColor: 'sky',
+        questions: [
+          {
+            id: 15,
+            prompt: 'My grandmother is an ___ woman.',
+            options: { a: '80-years-old', b: '80-year-old', c: '80 year-old', d: '80-years old' },
+            correct: 'b',
+            hint: 'When a number + time unit acts as a compound adjective before a noun ("woman"), the time unit stays singular and all parts are hyphenated.',
+            explanation:
+              'In a compound adjective before a noun, the noun unit ("year") must be singular, and all parts are joined with hyphens: "80-year-old woman".',
+          },
+          {
+            id: 16,
+            prompt: 'They bought a ___ table for their new apartment.',
+            options: { a: 'six-months-old', b: 'six months old', c: 'six-month-old', d: 'six-months old' },
+            correct: 'c',
+            hint: 'Apply the same compound adjective rule: singular time unit ("month") and hyphens connecting all three words before "table".',
+            explanation:
+              'Use the singular form "month" and connect all parts with hyphens when used before a noun: "six-month-old".',
+          },
+          {
+            id: 17,
+            prompt: 'He is a ___ boy who loves playing football.',
+            options: { a: 'twelve-year-old', b: 'twelve-years-old', c: 'twelve years-old', d: 'twelve-years old' },
+            correct: 'a',
+            hint: 'Check that "year" is singular (no -s) and that hyphens connect all three words before "boy".',
+            explanation:
+              '"twelve-year-old" is the correct hyphenated compound adjective form with "year" in the singular before the noun "boy".',
+          },
+          {
+            id: 18,
+            prompt: 'We stayed in a ___ hotel during our holiday.',
+            options: { a: 'five-stars', b: 'five-star', c: 'five-stars-rated', d: 'five stars' },
+            correct: 'b',
+            hint: 'Rating categories before a noun use a singular noun ("star") connected by a hyphen.',
+            explanation:
+              'Compound modifiers before a noun take the singular form ("five-star hotel", not "five-stars").',
+          },
+          {
+            id: 19,
+            prompt: 'She gave me a ___ presentation about climate change.',
+            options: { a: 'twenty-minutes', b: 'twenty-minutes-long', c: 'twenty-minute-long', d: 'twenty minute' },
+            correct: 'c',
+            hint: 'Even with "-long" added at the end, "minute" must remain singular and all parts must be hyphenated.',
+            explanation:
+              'In compound modifiers before a noun, "minute" stays in the singular and all words are hyphenated: "twenty-minute-long".',
+          },
+          {
+            id: 20,
+            prompt: 'My parents celebrated their ___ anniversary last week.',
+            options: { a: 'twenty-five-years', b: 'twenty-five-year', c: 'twenty-five years', d: 'twenty-five-years-old' },
+            correct: 'b',
+            hint: 'Before the noun "anniversary", "year" should be singular and hyphenated with the compound number.',
+            explanation:
+              'Use the singular "year" connected with hyphens in the compound modifier "twenty-five-year anniversary".',
+          },
+          {
+            id: 21,
+            prompt: 'Choose the grammatically correct sentence.',
+            options: {
+              a: 'He is a 30-years-old teacher.',
+              b: 'He is 30-year-old teacher.',
+              c: 'He is a 30-year-old teacher.',
+              d: 'He is a 30 years old teacher.',
+            },
+            correct: 'c',
+            hint: 'You need the indefinite article "a" for the singular countable noun "teacher", hyphens between the age words, and singular "year".',
+            explanation:
+              '"He is a 30-year-old teacher" is correct because it includes the indefinite article "a", proper hyphens, and the singular form "year".',
+          },
+        ],
+      },
+    ];
+
+    const STORAGE_KEY = 'grammar_studio_quiz_state_v1';
+
+    /**
+     * Application state:
+     * - currentView: 'home' | 'part1' | 'part2' | 'part3'
+     * - progress: { [questionId]: { wrongAttempts: ['a', ...], solved: boolean, showHint: boolean, showExplanation: boolean } }
+     */
+    let state = {
+      currentView: 'home',
+      progress: {},
+    };
+
+    /**
+     * Load saved state safely from localStorage.
+     */
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            state.progress = parsed.progress || {};
+          }
+        }
+      } catch (err) {
+        console.warn('Could not load saved quiz progress:', err);
+      }
+    }
+
+    /**
+     * Save current progress safely to localStorage.
+     */
+    function saveState() {
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({
+            progress: state.progress,
+          })
+        );
+      } catch (err) {
+        console.warn('Could not save quiz progress:', err);
+      }
+    }
+
+    /**
+     * Retrieve or initialize state object for a specific question ID.
+     */
+    function getQuestionState(qId) {
+      if (!state.progress[qId]) {
+        state.progress[qId] = {
+          wrongAttempts: [],
+          solved: false,
+          showHint: false,
+          showExplanation: false,
+        };
+      }
+      return state.progress[qId];
+    }
+
+    /**
+     * Calculate statistics for a single part or across the entire quiz.
+     */
+    function getPartStats(part) {
+      let solvedCount = 0;
+      let firstTryCount = 0;
+      let attemptedCount = 0;
+
+      part.questions.forEach((q) => {
+        const qs = getQuestionState(q.id);
+        if (qs.solved) {
+          solvedCount++;
+          if (qs.wrongAttempts.length === 0) {
+            firstTryCount++;
+          }
+        }
+        if (qs.solved || qs.wrongAttempts.length > 0) {
+          attemptedCount++;
+        }
+      });
+
+      return {
+        total: part.questions.length,
+        solved: solvedCount,
+        firstTry: firstTryCount,
+        attempted: attemptedCount,
+        percentage: Math.round((solvedCount / part.questions.length) * 100),
+      };
+    }
+
+    function getGlobalStats() {
+      let totalQuestions = 0;
+      let totalSolved = 0;
+      let totalFirstTry = 0;
+
+      QUIZ_PARTS.forEach((part) => {
+        const stats = getPartStats(part);
+        totalQuestions += stats.total;
+        totalSolved += stats.solved;
+        totalFirstTry += stats.firstTry;
+      });
+
+      return {
+        totalQuestions,
+        totalSolved,
+        totalFirstTry,
+        percentage: Math.round((totalSolved / totalQuestions) * 100),
+      };
+    }
+
+    /**
+     * Update the top header counter.
+     */
+    function updateHeaderScore() {
+      const globalStats = getGlobalStats();
+      const scoreEl = document.getElementById('global-score-count');
+      if (scoreEl) {
+        scoreEl.textContent = globalStats.totalSolved;
+      }
+    }
+
+    /**
+     * Navigate between 'home', 'part1', 'part2', and 'part3'.
+     */
+    function navigateTo(viewId) {
+      state.currentView = viewId;
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /**
+     * Handle user selecting an option (a, b, c, d) on a question.
+     */
+    function handleOptionSelect(partId, questionId, selectedKey) {
+      const part = QUIZ_PARTS.find((p) => p.id === partId);
+      if (!part) return;
+      const question = part.questions.find((q) => q.id === questionId);
+      if (!question) return;
+
+      const qState = getQuestionState(questionId);
+
+      // Ignore clicks if already solved or if this wrong option was already tried
+      if (qState.solved || qState.wrongAttempts.includes(selectedKey)) {
+        return;
+      }
+
+      if (selectedKey === question.correct) {
+        qState.solved = true;
+      } else {
+        qState.wrongAttempts.push(selectedKey);
+      }
+
+      saveState();
+      updateHeaderScore();
+      render();
+    }
+
+    /**
+     * Toggle Hint visibility for a specific question.
+     */
+    function toggleHint(questionId) {
+      const qState = getQuestionState(questionId);
+      qState.showHint = !qState.showHint;
+      saveState();
+      render();
+    }
+
+    /**
+     * Toggle Explanation visibility for a specific question.
+     */
+    function toggleExplanation(questionId) {
+      const qState = getQuestionState(questionId);
+      qState.showExplanation = !qState.showExplanation;
+      saveState();
+      render();
+    }
+
+    /**
+     * Modal handlers for resetting progress.
+     */
+    function openResetModal() {
+      const modal = document.getElementById('reset-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeResetModal() {
+      const modal = document.getElementById('reset-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    function confirmResetProgress() {
+      state.progress = {};
+      saveState();
+      closeResetModal();
+      updateHeaderScore();
+      render();
+    }
+
+    /**
+     * Escape HTML helper to safely render text.
+     */
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    /**
+     * Render formatted question prompt with styled blank placeholder or filled correct answer.
+     */
+    function formatPromptHtml(promptText, question, qState) {
+      const escaped = escapeHtml(promptText);
+      if (!escaped.includes('___')) {
+        return escaped;
+      }
+
+      if (qState.solved) {
+        const answerText = escapeHtml(question.options[question.correct]);
+        return escaped.replace(
+          '___',
+          `<span class="inline-flex items-center px-2.5 py-0.5 mx-0.5 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold shadow-2xs">${answerText}</span>`
+        );
+      }
+
+      return escaped.replace(
+        '___',
+        `<span class="inline-block min-w-[4.5rem] border-b-2 border-indigo-400 text-indigo-600 font-semibold text-center px-2 mx-0.5 select-none">?</span>`
+      );
+    }
+
+    /**
+     * Render the Home / Main Menu view with 3 distinct topic cards and progress summary.
+     */
+    function renderHomeView() {
+      const globalStats = getGlobalStats();
+
+      const cardsHtml = QUIZ_PARTS.map((part) => {
+        const stats = getPartStats(part);
+        const isCompleted = stats.solved === stats.total;
+
+        return `
+          <div class="bg-white rounded-2xl border ${
+            isCompleted ? 'border-emerald-200 ring-1 ring-emerald-500/10' : 'border-slate-200'
+          } shadow-sm hover:shadow-md hover:border-indigo-300 transition-all flex flex-col justify-between p-6 group">
+            <div>
+              <!-- Card Top Header -->
+              <div class="flex items-center justify-between gap-2 mb-4">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-indigo-50 text-indigo-700 border border-indigo-100">
+                  ${escapeHtml(part.shortTitle)} &bull; ${stats.total} Questions
+                </span>
+
+                ${
+                  isCompleted
+                    ? `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Completed
+                      </span>`
+                    : `<span class="text-xs font-semibold text-slate-500">
+                        ${stats.solved}/${stats.total} Solved
+                      </span>`
+                }
+              </div>
+
+              <!-- Title & Description -->
+              <h2 class="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors mb-2">
+                ${escapeHtml(part.title)}
+              </h2>
+              <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                ${escapeHtml(part.description)}
+              </p>
+            </div>
+
+            <!-- Progress Bar & Action Button -->
+            <div>
+              <div class="mb-4">
+                <div class="flex items-center justify-between text-xs font-medium text-slate-500 mb-1.5">
+                  <span>Topic Progress</span>
+                  <span class="font-semibold text-slate-700">${stats.percentage}%</span>
+                </div>
+                <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    class="h-full rounded-full transition-all duration-500 ${
+                      isCompleted ? 'bg-emerald-500' : 'bg-indigo-600'
+                    }"
+                    style="width: ${stats.percentage}%"
+                  ></div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onclick="navigateTo('${part.id}')"
+                class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold text-white ${
+                  isCompleted
+                    ? 'bg-emerald-600 hover:bg-emerald-700'
+                    : 'bg-indigo-600 hover:bg-indigo-700'
+                } shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+              >
+                <span>${
+                  stats.solved === 0
+                    ? 'Start Practice'
+                    : isCompleted
+                    ? 'Review Questions'
+                    : 'Continue Practice'
+                }</span>
+                <svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <section class="space-y-8">
+          <!-- Hero / Instructions Banner -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+              <div class="max-w-2xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold mb-3 border border-indigo-100">
+                  <span>Interactive Self-Paced Grammar Test</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-3">
+                  Choose a Grammar Topic to Practice
+                </h1>
+                <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+                  Select one of the three grammar modules below. If you pick an incorrect option, it stays marked in red so you remember what you tried, and you can immediately choose another option until you find the right answer. Use the <strong class="font-semibold text-slate-800">Hint</strong> and <strong class="font-semibold text-slate-800">Explanation</strong> buttons beside any question whenever you need support.
+                </p>
+              </div>
+
+              <!-- Overall Progress Card -->
+              <div class="bg-slate-50 border border-slate-200/90 rounded-2xl p-5 min-w-[240px] shrink-0">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Overall Score</span>
+                  <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-700">
+                    ${globalStats.percentage}%
+                  </span>
+                </div>
+                <div class="text-3xl font-extrabold text-slate-900 mb-1">
+                  ${globalStats.totalSolved} <span class="text-base font-medium text-slate-500">/ ${globalStats.totalQuestions}</span>
+                </div>
+                <p class="text-xs text-slate-500 mb-3">
+                  First-try solves: <span class="font-semibold text-emerald-600">${globalStats.totalFirstTry}</span>
+                </p>
+                <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                  <div
+                    class="h-full bg-indigo-600 rounded-full transition-all duration-500"
+                    style="width: ${globalStats.percentage}%"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3 Topic Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            ${cardsHtml}
+          </div>
+        </section>
+      `;
+    }
+
+    /**
+     * Render a dedicated Topic / Part view with its 7 questions, hints, explanations, and navigation.
+     */
+    function renderPartView(partIndex) {
+      const part = QUIZ_PARTS[partIndex];
+      const stats = getPartStats(part);
+      const prevPart = partIndex > 0 ? QUIZ_PARTS[partIndex - 1] : null;
+      const nextPart = partIndex < QUIZ_PARTS.length - 1 ? QUIZ_PARTS[partIndex + 1] : null;
+
+      const questionsHtml = part.questions
+        .map((q) => {
+          const qState = getQuestionState(q.id);
+          const attemptsCount = qState.wrongAttempts.length + (qState.solved ? 1 : 0);
+
+          // Status badge for the question header
+          let statusBadgeHtml = '';
+          if (qState.solved) {
+            if (qState.wrongAttempts.length === 0) {
+              statusBadgeHtml = `
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  First-try!
+                </span>
+              `;
+            } else {
+              statusBadgeHtml = `
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  Solved (${attemptsCount} attempts)
+                </span>
+              `;
+            }
+          } else if (qState.wrongAttempts.length > 0) {
+            statusBadgeHtml = `
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                Try again (${qState.wrongAttempts.length} wrong ${qState.wrongAttempts.length === 1 ? 'try' : 'tries'})
+              </span>
+            `;
+          }
+
+          // Render the 4 option buttons (a, b, c, d)
+          const optionKeys = ['a', 'b', 'c', 'd'];
+          const optionsHtml = optionKeys
+            .map((key) => {
+              const labelText = q.options[key];
+              const isWrong = qState.wrongAttempts.includes(key);
+              const isCorrectOption = qState.solved && key === q.correct;
+              const isDisabled = qState.solved || isWrong;
+
+              let buttonClasses =
+                'w-full text-left flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl border text-sm sm:text-base font-medium transition-all focus:outline-none ';
+              let badgeClasses =
+                'w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold uppercase shrink-0 transition-colors ';
+              let trailingIcon = '';
+
+              if (isCorrectOption) {
+                buttonClasses +=
+                  'bg-emerald-50 border-emerald-500 text-emerald-900 shadow-2xs cursor-default';
+                badgeClasses += 'bg-emerald-600 text-white';
+                trailingIcon = `
+                  <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 shrink-0" aria-label="Correct answer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                `;
+              } else if (isWrong) {
+                buttonClasses +=
+                  'bg-rose-50/90 border-rose-300 text-rose-800 cursor-not-allowed opacity-90';
+                badgeClasses += 'bg-rose-500 text-white';
+                trailingIcon = `
+                  <span class="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 shrink-0">
+                    <span>Incorrect</span>
+                    <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-rose-100 text-rose-700">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </span>
+                  </span>
+                `;
+              } else if (qState.solved) {
+                // Remaining unselected options once the question is solved
+                buttonClasses +=
+                  'bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed opacity-65';
+                badgeClasses += 'bg-slate-200 text-slate-500';
+              } else {
+                // Active clickable option
+                buttonClasses +=
+                  'bg-white border-slate-200 text-slate-800 hover:border-indigo-400 hover:bg-indigo-50/40 active:scale-[0.99] cursor-pointer focus:ring-2 focus:ring-indigo-500/30';
+                badgeClasses += 'bg-slate-100 text-slate-700 group-hover:bg-indigo-100';
+              }
+
+              return `
+                <button
+                  type="button"
+                  onclick="handleOptionSelect('${part.id}', ${q.id}, '${key}')"
+                  ${isDisabled ? 'disabled' : ''}
+                  class="${buttonClasses}"
+                >
+                  <span class="flex items-center gap-3 min-w-0">
+                    <span class="${badgeClasses}">${key}</span>
+                    <span class="${isWrong ? 'line-through decoration-rose-400/80' : ''} break-words">${escapeHtml(labelText)}</span>
+                  </span>
+                  ${trailingIcon}
+                </button>
+              `;
+            })
+            .join('');
+
+          return `
+            <article
+              id="question-${q.id}"
+              class="bg-white rounded-2xl border ${
+                qState.solved ? 'border-emerald-200/90' : 'border-slate-200'
+              } p-5 sm:p-7 shadow-sm transition-all"
+            >
+              <!-- Question Top Row: Number, Prompt, Status Badge -->
+              <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-5">
+                <div class="flex items-start gap-3.5">
+                  <span class="w-8 h-8 rounded-xl ${
+                    qState.solved
+                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                      : 'bg-indigo-50 text-indigo-700 border border-indigo-100'
+                  } text-sm font-bold flex items-center justify-center shrink-0 mt-0.5">
+                    ${q.id}
+                  </span>
+                  <h3 class="text-base sm:text-lg font-semibold text-slate-900 leading-snug">
+                    ${formatPromptHtml(q.prompt, q, qState)}
+                  </h3>
+                </div>
+                <div class="shrink-0 self-start sm:self-center">
+                  ${statusBadgeHtml}
+                </div>
+              </div>
+
+              <!-- 4 Answer Options Grid -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+                ${optionsHtml}
+              </div>
+
+              <!-- Action Row: Hint & Explanation Toggle Buttons -->
+              <div class="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-100">
+                <div class="flex flex-wrap items-center gap-2.5">
+                  <button
+                    type="button"
+                    onclick="toggleHint(${q.id})"
+                    aria-expanded="${qState.showHint}"
+                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all border ${
+                      qState.showHint
+                        ? 'bg-amber-100 text-amber-900 border-amber-300'
+                        : 'bg-amber-50/70 text-amber-800 border-amber-200/80 hover:bg-amber-100/80'
+                    }"
+                  >
+                    <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                    <span>${qState.showHint ? 'Hide Hint' : 'Hint'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onclick="toggleExplanation(${q.id})"
+                    aria-expanded="${qState.showExplanation}"
+                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all border ${
+                      qState.showExplanation
+                        ? 'bg-indigo-100 text-indigo-900 border-indigo-300'
+                        : 'bg-indigo-50/70 text-indigo-800 border-indigo-200/80 hover:bg-indigo-100/80'
+                    }"
+                  >
+                    <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>${qState.showExplanation ? 'Hide Explanation' : 'Explanation'}</span>
+                  </button>
+                </div>
+
+                ${
+                  qState.wrongAttempts.length > 0 && !qState.solved
+                    ? `<span class="text-xs font-medium text-rose-600">
+                        Select another option to try again.
+                      </span>`
+                    : ''
+                }
+              </div>
+
+              <!-- Collapsible Hint Callout -->
+              ${
+                qState.showHint
+                  ? `
+                <div class="mt-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 text-sm leading-relaxed flex items-start gap-3">
+                  <span class="px-2 py-0.5 rounded-md bg-amber-200/80 text-amber-900 text-xs font-bold uppercase tracking-wide shrink-0 mt-0.5">
+                    Hint
+                  </span>
+                  <p>${escapeHtml(q.hint)}</p>
+                </div>
+              `
+                  : ''
+              }
+
+              <!-- Collapsible Explanation Callout -->
+              ${
+                qState.showExplanation
+                  ? `
+                <div class="mt-3 p-4 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-950 text-sm leading-relaxed flex items-start gap-3">
+                  <span class="px-2 py-0.5 rounded-md bg-indigo-200/80 text-indigo-900 text-xs font-bold uppercase tracking-wide shrink-0 mt-0.5">
+                    Rule
+                  </span>
+                  <div>
+                    <p class="font-semibold text-indigo-900 mb-1">
+                      Correct Answer: <span class="uppercase">${q.correct})</span> ${escapeHtml(q.options[q.correct])}
+                    </p>
+                    <p>${escapeHtml(q.explanation)}</p>
+                  </div>
+                </div>
+              `
+                  : ''
+              }
+            </article>
+          `;
+        })
+        .join('');
+
+      return `
+        <section class="space-y-6">
+          <!-- Top Breadcrumb & Back Button -->
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <button
+              type="button"
+              onclick="navigateTo('home')"
+              class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-sm font-semibold text-slate-700 hover:text-indigo-600 hover:border-indigo-300 shadow-2xs transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span>Back to Topics</span>
+            </button>
+
+            <!-- Quick Part Switcher Pills -->
+            <div class="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200">
+              ${QUIZ_PARTS.map(
+                (p) => `
+                <button
+                  type="button"
+                  onclick="navigateTo('${p.id}')"
+                  class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    p.id === part.id
+                      ? 'bg-indigo-600 text-white shadow-2xs'
+                      : 'text-slate-600 hover:bg-slate-100'
+                  }"
+                >
+                  ${escapeHtml(p.shortTitle)}
+                </button>
+              `
+              ).join('')}
+            </div>
+          </div>
+
+          <!-- Part Header Card & Progress Bar -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-sm">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+              <div>
+                <span class="inline-block text-xs font-bold uppercase tracking-wider text-indigo-600 mb-1">
+                  ${escapeHtml(part.shortTitle)} &bull; ${escapeHtml(part.subtitle)}
+                </span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                  ${escapeHtml(part.title)}
+                </h1>
+              </div>
+
+              <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl shrink-0">
+                <div class="text-right">
+                  <span class="block text-xs font-medium text-slate-500">Part Progress</span>
+                  <span class="text-base font-bold text-slate-900">
+                    ${stats.solved} of ${stats.total} Solved
+                  </span>
+                </div>
+                <div class="w-11 h-11 rounded-full flex items-center justify-center text-xs font-extrabold ${
+                  stats.solved === stats.total
+                    ? 'bg-emerald-100 text-emerald-700 border border-emerald-300'
+                    : 'bg-indigo-100 text-indigo-700 border border-indigo-200'
+                }">
+                  ${stats.percentage}%
+                </div>
+              </div>
+            </div>
+
+            <!-- Linear Progress Bar -->
+            <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+              <div
+                class="h-full rounded-full transition-all duration-500 ${
+                  stats.solved === stats.total ? 'bg-emerald-500' : 'bg-indigo-600'
+                }"
+                style="width: ${stats.percentage}%"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Questions Stack -->
+          <div class="space-y-5">
+            ${questionsHtml}
+          </div>
+
+          <!-- Completion Banner if all 7 questions in this part are solved -->
+          ${
+            stats.solved === stats.total
+              ? `
+            <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div class="flex items-center gap-3.5">
+                <div class="w-11 h-11 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="text-base font-bold text-emerald-950">
+                    ${escapeHtml(part.shortTitle)} Complete!
+                  </h3>
+                  <p class="text-sm text-emerald-800">
+                    You solved all ${stats.total} questions in this section (${stats.firstTry} on your first try).
+                  </p>
+                </div>
+              </div>
+              ${
+                nextPart
+                  ? `<button
+                      type="button"
+                      onclick="navigateTo('${nextPart.id}')"
+                      class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-sm transition-colors"
+                    >
+                      <span>Continue to ${escapeHtml(nextPart.shortTitle)}</span>
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </button>`
+                  : `<button
+                      type="button"
+                      onclick="navigateTo('home')"
+                      class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-sm transition-colors"
+                    >
+                      <span>View Overall Results</span>
+                    </button>`
+              }
+            </div>
+          `
+              : ''
+          }
+
+          <!-- Bottom Next / Previous Part Navigation -->
+          <div class="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            ${
+              prevPart
+                ? `
+              <button
+                type="button"
+                onclick="navigateTo('${prevPart.id}')"
+                class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white border border-slate-200 text-sm font-semibold text-slate-700 hover:border-indigo-300 hover:text-indigo-600 shadow-2xs transition-all"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                <span>Previous: ${escapeHtml(prevPart.shortTitle)}</span>
+              </button>
+            `
+                : `
+              <button
+                type="button"
+                onclick="navigateTo('home')"
+                class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white border border-slate-200 text-sm font-semibold text-slate-700 hover:border-indigo-300 hover:text-indigo-600 shadow-2xs transition-all"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span>Back to Main Menu</span>
+              </button>
+            `
+            }
+
+            ${
+              nextPart
+                ? `
+              <button
+                type="button"
+                onclick="navigateTo('${nextPart.id}')"
+                class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-sm transition-all"
+              >
+                <span>Next: ${escapeHtml(nextPart.shortTitle)} (${escapeHtml(nextPart.title.split('(')[0].trim())})</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            `
+                : `
+              <button
+                type="button"
+                onclick="navigateTo('home')"
+                class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-sm transition-all"
+              >
+                <span>Finish &amp; Return to Topics</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </button>
+            `
+            }
+          </div>
+        </section>
+      `;
+    }
+
+    /**
+     * Master render function that mounts the active view into #app-container.
+     */
+    function render() {
+      const container = document.getElementById('app-container');
+      if (!container) return;
+
+      if (state.currentView === 'home') {
+        container.innerHTML = renderHomeView();
+      } else {
+        const partIdx = QUIZ_PARTS.findIndex((p) => p.id === state.currentView);
+        if (partIdx !== -1) {
+          container.innerHTML = renderPartView(partIdx);
+        } else {
+          state.currentView = 'home';
+          container.innerHTML = renderHomeView();
+        }
+      }
+    }
+
+    // Close modal on Escape key press
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeResetModal();
+      }
+    });
+
+    // Initialize app on load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      updateHeaderScore();
+      render();
+    });
+  </script>
+</body>
+</html>
